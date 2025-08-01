@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Virtual Sandcastle Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #fceabb;
+      margin: 0;
+      padding: 20px;
+    }
+    canvas {
+      border: 2px solid #333;
+      background: #f4e2d8;
+      display: block;
+      margin: 0 auto;
+    }
+    #ui {
+      margin-top: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin: 5px;
+    }
+    #message {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #333;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Virtual Sandcastle Builder Game</h1>
+  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <div id="ui">
+    <button id="placeBtn">Place Sand Part 🧱</button>
+    <p id="message"></p>
+  </div>
+
+  <audio id="waveSound" src="wave.mp3" preload="auto"></audio>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const placeBtn = document.getElementById("placeBtn");
+    const message = document.getElementById("message");
+    const waveSound = document.getElementById("waveSound");
+
+    const totalParts = 6;
+    let placedParts = 0;
+    let partPositions = [];
+    let gameActive = true;
+    let waveAnimating = false;
+    let waveX = -600; // wave starts off screen
+
+    // Draw background
+    function resetCanvas() {
+      ctx.fillStyle = "#f4e2d8";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function drawCastleParts() {
+      ctx.fillStyle = "#d2b48c";
+      partPositions.forEach((p) => {
+        ctx.fillRect(p.x, p.y, 50, 30);
+      });
+    }
+
+    function placePart() {
+      if (!gameActive || waveAnimating) return;
+
+      const x = 100 + placedParts * 60;
+      const y = canvas.height - 60 - (placedParts % 2) * 30;
+
+      partPositions.push({ x, y });
+      placedParts++;
+
+      drawFrame();
+
+      if (placedParts >= totalParts) {
+        triggerWave();
+      }
+    }
+
+    function triggerWave() {
+      gameActive = false;
+      waveAnimating = true;
+      message.textContent = "🌊 The wave is coming!";
+      waveSound.play();
+      animateWave();
+    }
+
+    function animateWave() {
+      function drawWave() {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(waveX, canvas.height - 100);
+        for (let x = 0; x <= 600; x += 10) {
+          const y = 20 * Math.sin((x + waveX) * 0.05);
+          ctx.lineTo(waveX + x, canvas.height - 100 + y);
+        }
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(waveX, canvas.height);
+        ctx.closePath();
+        ctx.fillStyle = "#00bfff";
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function update() {
+        resetCanvas();
+        drawCastleParts();
+        drawWave();
+
+        waveX += 10;
+        if (waveX < canvas.width) {
+          requestAnimationFrame(update);
+        } else {
+          setTimeout(() => {
+            message.textContent = "Your castle was destroyed! Try again.";
+            restartGame();
+          }, 1000);
+        }
+      }
+
+      update();
+    }
+
+    function startGame() {
+      resetCanvas();
+      placedParts = 0;
+      partPositions = [];
+      gameActive = true;
+      waveAnimating = false;
+      waveX = -600;
+      message.textContent = "";
+
+      setTimeout(() => {
+        if (gameActive) {
+          triggerWave();
+        }
+      }, 5000); // time limit before wave comes
+    }
+
+    function restartGame() {
+      setTimeout(() => {
+        startGame();
+      }, 2000);
+    }
+
+    function drawFrame() {
+      resetCanvas();
+      drawCastleParts();
+    }
+
+    // Events
+    placeBtn.addEventListener("click", placePart);
+
+    // Start
+    startGame();
+  </script>
+</body>
+</html>

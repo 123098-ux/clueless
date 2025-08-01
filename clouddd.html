@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cloud Shape Guesser</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    img { max-width: 300px; margin: 20px auto; display: block; }
+    #result { font-size: 24px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>☁️ What does your cloud look like?</h1>
+  <input type="file" accept="image/*" id="upload" />
+  <img id="preview" src="" alt="Your cloud will appear here" />
+  <div id="result"></div>
+
+  <script>
+    const funnyShapes = [
+      "potato 🥔", "dog 🐶", "croissant 🥐", "dragon 🐉", 
+      "sad balloon 🎈", "space cat 🚀🐱", "bunny cloud 🐰", 
+      "duck in boots 🦆👢", "toaster with attitude 🍞", "spilled milk 🥛"
+    ];
+
+    document.getElementById('upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        document.getElementById('preview').src = event.target.result;
+        const guess = funnyShapes[Math.floor(Math.random() * funnyShapes.length)];
+        document.getElementById('result').textContent = `This cloud looks like a ${guess}`;
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+</body>
+</html>
