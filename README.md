@@ -35,10 +35,12 @@ For Software:
 - VS Code,Github
 
 # Installation
-[commands]
+git clone https://github.com/123098-ux/sandcastle-builder.git
+cd sandcastle-builder
+
 
 # Run
-[commands]
+https://github.com/123098-ux/clueless
 
 ### Project Documentation
 For Software:
