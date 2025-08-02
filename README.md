@@ -42,9 +42,6 @@ cd sandcastle-builder
 # Run
 https://github.com/123098-ux/clueless
 
-### Project Documentation
-For Software:
-
 # Screenshots
 ## 📸 Demo Screenshot
 
